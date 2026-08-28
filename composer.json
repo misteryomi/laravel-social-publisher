@@ -1,0 +1,32 @@
+{
+    "name": "misteryomi/laravel-social-publisher",
+    "description": "Driver-based social media scheduling for Laravel \u2014 Buffer and beyond.",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "require": {
+        "php": "^8.2",
+        "illuminate/cache": "^11.0|^12.0",
+        "illuminate/config": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
+        "illuminate/log": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Misteryomi\\SocialPublisher\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Misteryomi\\SocialPublisher\\SocialPublisherServiceProvider"
+            ],
+            "aliases": {
+                "SocialPublisher": "Misteryomi\\SocialPublisher\\Facades\\SocialPublisher"
+            }
+        }
+    },
+    "minimum-stability": "stable"
+}
