@@ -6,12 +6,12 @@
     "version": "1.0.0",
     "require": {
         "php": "^8.2",
-        "illuminate/cache": "^11.0|^12.0",
-        "illuminate/config": "^11.0|^12.0",
-        "illuminate/database": "^11.0|^12.0",
-        "illuminate/http": "^11.0|^12.0",
-        "illuminate/log": "^11.0|^12.0",
-        "illuminate/support": "^11.0|^12.0"
+        "illuminate/cache": "^11.0|^12.0|^13.0",
+        "illuminate/config": "^11.0|^12.0|^13.0",
+        "illuminate/database": "^11.0|^12.0|^13.0",
+        "illuminate/http": "^11.0|^12.0|^13.0",
+        "illuminate/log": "^11.0|^12.0|^13.0",
+        "illuminate/support": "^11.0|^12.0|^13.0"
     },
     "autoload": {
         "psr-4": {
