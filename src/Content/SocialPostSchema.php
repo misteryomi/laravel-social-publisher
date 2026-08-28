@@ -69,16 +69,16 @@ final class SocialPostSchema
     private static function platformCopyProperty(Platform $platform): array
     {
         $hints = [
-            Platform::X         => 'Max 280 characters including any URL. Punchy, 2-3 relevant hashtags only.',
-            Platform::LinkedIn  => '2-3 short paragraphs. Professional tone. Max 2 hashtags. End with a clear CTA.',
-            Platform::Facebook  => 'Casual, accessible tone. End with an open question to drive engagement.',
-            Platform::Instagram => 'One sentence naming one company/topic, then 10 relevant hashtags on a new line. No lists.',
-            Platform::TikTok    => 'Short, punchy caption. 3-5 hashtags. Hook in the first line.',
+            Platform::X->value         => 'Max 280 characters including any URL. Punchy, 2-3 relevant hashtags only.',
+            Platform::LinkedIn->value  => '2-3 short paragraphs. Professional tone. Max 2 hashtags. End with a clear CTA.',
+            Platform::Facebook->value  => 'Casual, accessible tone. End with an open question to drive engagement.',
+            Platform::Instagram->value => 'One sentence naming one company/topic, then 10 relevant hashtags on a new line. No lists.',
+            Platform::TikTok->value    => 'Short, punchy caption. 3-5 hashtags. Hook in the first line.',
         ];
 
         return [
             'type'        => 'string',
-            'description' => $hints[$platform] ?? "Copy for {$platform->label()}.",
+            'description' => $hints[$platform->value] ?? "Copy for {$platform->label()}.",
         ];
     }
 
