@@ -107,10 +107,6 @@ final class BufferDriver implements SocialDriverContract
                 'mode'           => $scheduledAt !== null ? 'customScheduled' : 'addToQueue',
             ];
 
-            if (in_array($platform, ['instagram', 'facebook'], true)) {
-                $input['mediaType'] = 'POST';
-            }
-
             if ($scheduledAt !== null) {
                 $input['dueAt'] = $scheduledAt->toIso8601String();
             }
@@ -164,7 +160,6 @@ final class BufferDriver implements SocialDriverContract
                 'channelId'      => $channelId,
                 'schedulingType' => 'automatic',
                 'mode'           => $scheduledAt !== null ? 'customScheduled' : 'addToQueue',
-                'mediaType'      => $platform === 'tiktok' ? 'VIDEO' : 'REEL',
                 'assets'         => [['video' => ['url' => $publicVideoUrl]]],
             ];
 
