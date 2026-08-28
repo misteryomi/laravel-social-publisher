@@ -2,8 +2,6 @@
 
 Driver-based social publishing for Laravel. Handles scheduling posts to Buffer (and future providers) with typed content DTOs and an AI-agnostic content layer.
 
-Built for [Borderless](https://borderless.so) and [SponsorshipJobs](https://sponsorshipjobs.uk). Extracted as a package so both apps share one scheduling and content layer without duplicating code.
-
 ---
 
 ## What it does
