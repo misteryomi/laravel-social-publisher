@@ -4,21 +4,13 @@ namespace Misteryomi\SocialPublisher\Drivers;
 
 use Carbon\CarbonInterface;
 use Misteryomi\SocialPublisher\Contracts\SocialDriverContract;
+use Misteryomi\SocialPublisher\Enums\Platform;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 final class BufferDriver implements SocialDriverContract
 {
-    // Canonical platform name → Buffer service key.
-    private const PLATFORM_MAP = [
-        'x'         => 'twitter',
-        'linkedin'  => 'linkedin',
-        'instagram' => 'instagram',
-        'facebook'  => 'facebook',
-        'tiktok'    => 'tiktok',
-    ];
-
     private const CREATE_POST = <<<'GQL'
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
@@ -74,7 +66,7 @@ final class BufferDriver implements SocialDriverContract
 
     public function profileIdForPlatform(string $platform): ?string
     {
-        $service = self::PLATFORM_MAP[$platform] ?? $platform;
+        $service = Platform::tryFrom($platform)?->bufferService() ?? $platform;
 
         $match = collect($this->profiles())->first(fn ($p) => $p['service'] === $service);
 

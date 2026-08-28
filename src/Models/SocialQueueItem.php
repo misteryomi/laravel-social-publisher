@@ -4,6 +4,7 @@ namespace Misteryomi\SocialPublisher\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Misteryomi\SocialPublisher\Enums\Platform;
 
 /**
  * Base model for the social_queue_items table.
@@ -43,13 +44,10 @@ class SocialQueueItem extends Model
         'published_at',
     ];
 
-    public const PLATFORM_LABELS = [
-        'x'         => 'X',
-        'linkedin'  => 'LinkedIn',
-        'instagram' => 'Instagram',
-        'facebook'  => 'Facebook',
-        'tiktok'    => 'TikTok',
-    ];
+    public function platformLabel(): string
+    {
+        return Platform::labelFor($this->platform ?? '');
+    }
 
     protected $fillable = self::FILLABLE_BASE;
 
