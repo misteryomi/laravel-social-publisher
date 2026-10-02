@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
  * Returns raw MP4 bytes on success, or null when FFmpeg is unavailable or fails.
  * Failures are logged and never throw — callers should fall back to image posting.
  */
-final class SocialVideoRenderer
+class SocialVideoRenderer
 {
     /**
      * Render an MP4 from JPEG image bytes and a local audio file.
