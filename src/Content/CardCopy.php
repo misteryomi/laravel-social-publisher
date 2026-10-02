@@ -21,6 +21,7 @@ final class CardCopy
         public readonly string $subtitle = '',
         public readonly string $label = '',
         public readonly array $rows = [],
+        public readonly string $company = '',
     ) {}
 
     public static function fromArray(array $data): self
@@ -31,12 +32,23 @@ final class CardCopy
             subtitle:  (string) ($data['subtitle']  ?? ''),
             label:     (string) ($data['label']     ?? ''),
             rows:      self::normaliseRows($data['rows'] ?? []),
+            company:   (string) ($data['company'] ?? ''),
         );
     }
 
     public function withLabel(string $label): self
     {
-        return new self($this->headline, $this->highlight, $this->subtitle, $label, $this->rows);
+        return new self($this->headline, $this->highlight, $this->subtitle, $label, $this->rows, $this->company);
+    }
+
+    /**
+     * The employer this card is about. Renderers use it for the lead-in and to
+     * avoid printing the same name twice; like rows, it is a caller-supplied
+     * fact rather than generated copy.
+     */
+    public function withCompany(string $company): self
+    {
+        return new self($this->headline, $this->highlight, $this->subtitle, $this->label, $this->rows, trim($company));
     }
 
     /**
@@ -44,7 +56,7 @@ final class CardCopy
      */
     public function withRows(array $rows): self
     {
-        return new self($this->headline, $this->highlight, $this->subtitle, $this->label, self::normaliseRows($rows));
+        return new self($this->headline, $this->highlight, $this->subtitle, $this->label, self::normaliseRows($rows), $this->company);
     }
 
     public function hasRows(): bool
@@ -59,6 +71,7 @@ final class CardCopy
             'highlight' => $this->highlight,
             'subtitle'  => $this->subtitle,
             'label'     => $this->label,
+            'company'   => $this->company,
         ], fn ($v) => $v !== '');
 
         if ($this->rows !== []) {

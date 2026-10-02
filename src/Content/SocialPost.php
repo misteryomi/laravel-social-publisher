@@ -88,6 +88,12 @@ final class SocialPost
         return new self($this->platformCopy, $this->card->withRows($rows));
     }
 
+    /** Return a new instance with the card's employer set — fluent, immutable. */
+    public function withCardCompany(string $company): self
+    {
+        return new self($this->platformCopy, $this->card->withCompany($company));
+    }
+
     public function toArray(): array
     {
         return array_merge($this->platformCopy, ['card' => $this->card->toArray()]);
