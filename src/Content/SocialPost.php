@@ -75,6 +75,19 @@ final class SocialPost
         return new self($this->platformCopy, $this->card->withLabel($label));
     }
 
+    /**
+     * Return a new instance with card detail rows set — fluent, immutable.
+     *
+     * Rows are facts the caller already holds, attached after generation so the
+     * card can show them rather than only the model's headline.
+     *
+     * @param  array<int, array{primary?: string, secondary?: string}>  $rows
+     */
+    public function withCardRows(array $rows): self
+    {
+        return new self($this->platformCopy, $this->card->withRows($rows));
+    }
+
     public function toArray(): array
     {
         return array_merge($this->platformCopy, ['card' => $this->card->toArray()]);
