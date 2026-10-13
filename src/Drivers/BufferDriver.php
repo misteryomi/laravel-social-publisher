@@ -40,12 +40,7 @@ final class BufferDriver implements SocialDriverContract
         $ttl = (int) ($this->config['profiles_cache_ttl'] ?? 300);
 
         return Cache::remember('social_publisher_buffer_profiles', $ttl, function () {
-            $account = $this->graphql('query { account { organizations { id } } }');
-            $orgId   = $account['account']['organizations'][0]['id'] ?? null;
-
-            if ($orgId === null) {
-                throw new \RuntimeException('No Buffer organization found for this token.');
-            }
+            $orgId = $this->organizationId();
 
             $data = $this->graphql(
                 'query GetChannels($input: ChannelsInput!) { channels(input: $input) { id name service } }',
@@ -62,6 +57,70 @@ final class BufferDriver implements SocialDriverContract
                 ->values()
                 ->all();
         });
+    }
+
+    /**
+     * Where Buffer's posts have got to, for the given post IDs. Lists the
+     * organisation's sent and failed posts (newest first, a few pages at
+     * most) and matches them to the IDs; anything not found is still
+     * scheduled, or too old to look up, and is left out.
+     *
+     * @param  array<int, string>  $postIds
+     * @return array<string, array{status: string, due_at: string|null}>
+     */
+    public function postStatuses(array $postIds): array
+    {
+        $wanted = array_fill_keys(array_map('strval', array_filter($postIds)), true);
+
+        if ($wanted === [] || ! $this->isConfigured()) {
+            return [];
+        }
+
+        $orgId = json_encode($this->organizationId());
+        $found = [];
+        $after = null;
+
+        for ($page = 0; $page < self::STATUS_MAX_PAGES && count($found) < count($wanted); $page++) {
+            $cursor = $after !== null ? ', after: '.json_encode($after) : '';
+
+            // Inline arguments: the docs name the fields, not the input types.
+            $data = $this->graphql(
+                "query { posts(first: 100{$cursor}, input: { organizationId: {$orgId}, filter: { status: [sent, error] } }) { edges { node { id status dueAt } } pageInfo { hasNextPage endCursor } } }"
+            );
+
+            foreach ($data['posts']['edges'] ?? [] as $edge) {
+                $id = (string) ($edge['node']['id'] ?? '');
+
+                if (isset($wanted[$id])) {
+                    $found[$id] = [
+                        'status' => strtolower((string) ($edge['node']['status'] ?? '')),
+                        'due_at' => $edge['node']['dueAt'] ?? null,
+                    ];
+                }
+            }
+
+            if (! ($data['posts']['pageInfo']['hasNextPage'] ?? false)) {
+                break;
+            }
+
+            $after = $data['posts']['pageInfo']['endCursor'] ?? null;
+        }
+
+        return $found;
+    }
+
+    private const STATUS_MAX_PAGES = 5;
+
+    private function organizationId(): string
+    {
+        $account = $this->graphql('query { account { organizations { id } } }');
+        $orgId   = $account['account']['organizations'][0]['id'] ?? null;
+
+        if ($orgId === null) {
+            throw new \RuntimeException('No Buffer organization found for this token.');
+        }
+
+        return (string) $orgId;
     }
 
     public function profileIdForPlatform(string $platform): ?string

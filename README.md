@@ -116,6 +116,15 @@ SocialPublisher::queueReel(
 );
 ```
 
+### Checking what has been sent
+
+```php
+SocialPublisher::driver()->postStatuses(['post_id_1', 'post_id_2']);
+// ['post_id_1' => ['status' => 'sent', 'due_at' => '2026-10-14T09:00:00Z']]
+```
+
+Only posts that have been sent or have failed come back; anything still scheduled is left out. Buffer's list of sent and failed posts is read newest first, a few pages deep, so check regularly rather than for posts from long ago.
+
 ### Listing connected profiles
 
 ```php
@@ -390,6 +399,7 @@ class HootsuiteDriver implements SocialDriverContract
     public function profileIdForPlatform(string $platform): ?string { ... }
     public function queue(string $text, array $profileIds, ...): array { ... }
     public function queueCarousel(string $text, array $profileIds, array $imageUrls, ...): array { ... }
+    public function postStatuses(array $postIds): array { ... }
     public function queueReel(string $text, array $profileIds, string $videoUrl, ...): array { ... }
 }
 ```

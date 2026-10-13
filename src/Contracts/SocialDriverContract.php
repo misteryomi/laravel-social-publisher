@@ -55,6 +55,16 @@ interface SocialDriverContract
     ): array;
 
     /**
+     * Where the given posts have got to on the platform: 'sent' or 'error',
+     * keyed by post ID, with the time it was due. Posts still waiting, or not
+     * found, are left out. Throws on a transport or API error.
+     *
+     * @param  array<int, string>  $postIds
+     * @return array<string, array{status: string, due_at: string|null}>
+     */
+    public function postStatuses(array $postIds): array;
+
+    /**
      * Queue a multi-image post (an Instagram or LinkedIn carousel, an X image
      * set) to the given profile IDs. Images keep their order; a platform's
      * image cap drops the extras, and URLs that are not publicly reachable
