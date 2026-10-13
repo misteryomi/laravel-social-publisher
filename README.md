@@ -92,6 +92,19 @@ SocialPublisher::queue('Hello world', ['profile_id_1'], imageUrl: 'https://examp
 SocialPublisher::queueToAll('Hello world');
 ```
 
+### Scheduling a carousel
+
+```php
+SocialPublisher::queueCarousel(
+    text: 'Caption here',
+    profileIds: ['instagram_profile_id'],
+    imageUrls: [$coverUrl, $slide2Url, $slide3Url],
+    platform: 'instagram',
+);
+```
+
+Images keep their order. X takes up to 4 and everything else up to 10; extras are dropped, and URLs that are not publicly reachable are skipped.
+
 ### Scheduling a Reel / short video
 
 ```php
@@ -376,6 +389,7 @@ class HootsuiteDriver implements SocialDriverContract
     public function profiles(): array { ... }
     public function profileIdForPlatform(string $platform): ?string { ... }
     public function queue(string $text, array $profileIds, ...): array { ... }
+    public function queueCarousel(string $text, array $profileIds, array $imageUrls, ...): array { ... }
     public function queueReel(string $text, array $profileIds, string $videoUrl, ...): array { ... }
 }
 ```

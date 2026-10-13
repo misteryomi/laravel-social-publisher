@@ -55,6 +55,26 @@ interface SocialDriverContract
     ): array;
 
     /**
+     * Queue a multi-image post (an Instagram or LinkedIn carousel, an X image
+     * set) to the given profile IDs. Images keep their order; a platform's
+     * image cap drops the extras, and URLs that are not publicly reachable
+     * are skipped.
+     *
+     * Returns driver-specific post IDs on success, or an empty array on failure.
+     *
+     * @param  array<int, string>  $profileIds
+     * @param  array<int, string>  $imageUrls
+     * @return array<int, string>
+     */
+    public function queueCarousel(
+        string $text,
+        array $profileIds,
+        array $imageUrls,
+        ?CarbonInterface $scheduledAt = null,
+        ?string $platform = null,
+    ): array;
+
+    /**
      * Queue a Reel / short-video post to the given profile IDs.
      *
      * Uses the platform's native video format (REEL for Instagram, VIDEO for TikTok).

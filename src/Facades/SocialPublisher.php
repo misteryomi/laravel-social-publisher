@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array    profiles()
  * @method static string|null profileIdForPlatform(string $platform)
  * @method static array    queue(string $text, array $profileIds, ?\Carbon\CarbonInterface $scheduledAt = null, ?string $imageUrl = null, ?string $platform = null)
+ * @method static array    queueCarousel(string $text, array $profileIds, array $imageUrls, ?\Carbon\CarbonInterface $scheduledAt = null, ?string $platform = null)
  * @method static array    queueReel(string $text, array $profileIds, string $videoUrl, ?\Carbon\CarbonInterface $scheduledAt = null, ?string $platform = null)
  * @method static array    queueToAll(string $text, ?\Carbon\CarbonInterface $scheduledAt = null, ?string $imageUrl = null)
  * @method static void     extend(string $driver, \Closure $callback)

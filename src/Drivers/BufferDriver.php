@@ -74,6 +74,13 @@ final class BufferDriver implements SocialDriverContract
     }
 
     /**
+     * Platforms cap how many images one post carries. Extra images are dropped.
+     */
+    private const MAX_IMAGES = ['x' => 4, 'twitter' => 4];
+
+    private const MAX_IMAGES_DEFAULT = 10;
+
+    /**
      * @param  array<int, string>  $profileIds
      * @return array<int, string>
      */
@@ -84,14 +91,59 @@ final class BufferDriver implements SocialDriverContract
         ?string $imageUrl = null,
         ?string $platform = null,
     ): array {
+        $publicImageUrl = $this->publicUrl($imageUrl);
+
+        return $this->queueWithAssets(
+            $text,
+            $profileIds,
+            $scheduledAt,
+            $publicImageUrl !== null ? [['image' => ['url' => $publicImageUrl]]] : [],
+        );
+    }
+
+    /**
+     * @param  array<int, string>  $profileIds
+     * @param  array<int, string>  $imageUrls
+     * @return array<int, string>
+     */
+    public function queueCarousel(
+        string $text,
+        array $profileIds,
+        array $imageUrls,
+        ?CarbonInterface $scheduledAt = null,
+        ?string $platform = null,
+    ): array {
+        $max  = self::MAX_IMAGES[$platform ?? ''] ?? self::MAX_IMAGES_DEFAULT;
+        $urls = array_slice(array_values(array_filter(array_map(fn ($u) => $this->publicUrl($u), $imageUrls))), 0, $max);
+
+        if ($urls === []) {
+            Log::warning('SocialPublisher/Buffer: carousel has no publicly reachable images — skipping post');
+
+            return [];
+        }
+
+        return $this->queueWithAssets(
+            $text,
+            $profileIds,
+            $scheduledAt,
+            array_map(fn (string $url) => ['image' => ['url' => $url]], $urls),
+        );
+    }
+
+    /**
+     * @param  array<int, string>  $profileIds
+     * @param  array<int, array<string, mixed>>  $assets
+     * @return array<int, string>
+     */
+    private function queueWithAssets(string $text, array $profileIds, ?CarbonInterface $scheduledAt, array $assets): array
+    {
         if (! $this->isConfigured()) {
             Log::warning('SocialPublisher/Buffer: access token not set — skipping post');
 
             return [];
         }
 
-        $channelIds    = array_values(array_filter($profileIds));
-        $publicImageUrl = $this->publicUrl($imageUrl);
+        $channelIds = array_values(array_filter($profileIds));
 
         if ($channelIds === []) {
             return [];
@@ -111,8 +163,8 @@ final class BufferDriver implements SocialDriverContract
                 $input['dueAt'] = $scheduledAt->toIso8601String();
             }
 
-            if ($publicImageUrl !== null) {
-                $input['assets'] = [['image' => ['url' => $publicImageUrl]]];
+            if ($assets !== []) {
+                $input['assets'] = $assets;
             }
 
             try {
